@@ -389,7 +389,7 @@ function Footer() {
           ))}
         </ul>
         <ul className="space-y-3 text-sm">
-          <li><a href="#" className="link-underline hover:text-cream">Instagram</a></li>
+          <li><a href="https://www.instagram.com/romacasadepaes/" target="_blank" rel="noreferrer" className="link-underline hover:text-cream">Instagram</a></li>
           <li><a href={WHATSAPP} target="_blank" rel="noreferrer" className="link-underline hover:text-cream">WhatsApp</a></li>
         </ul>
       </div>
