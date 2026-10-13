@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X, MapPin, Phone, Star, ArrowUpRight } from "lucide-react";
 import hero from "@/assets/hero.jpg";
+import heroRoma from "@/assets/hero-roma.jpg";
+import paodequeijo from "@/assets/paodequeijo.jpg";
 import breakfast from "@/assets/breakfast.jpg";
 import cakes from "@/assets/cakes.jpg";
 import oven from "@/assets/oven.jpg";
@@ -52,15 +54,15 @@ function useReveal() {
 
 function Btn({ href, children, variant = "solid" }: { href: string; children: React.ReactNode; variant?: "solid" | "outline" | "light" | "ghostLight" }) {
   const styles = {
-    solid: "bg-primary text-primary-foreground hover:bg-coffee",
-    outline: "border border-foreground/30 text-foreground hover:bg-foreground hover:text-background",
-    light: "bg-cream text-coffee hover:bg-wheat",
-    ghostLight: "border border-cream/50 text-cream hover:bg-cream hover:text-coffee",
+    solid: "bg-primary text-primary-foreground hover:bg-wine-dark",
+    outline: "border border-wine text-wine hover:bg-wine hover:text-cream",
+    light: "bg-cream text-wine hover:bg-wheat",
+    ghostLight: "border border-cream/60 text-cream hover:bg-cream hover:text-wine",
   }[variant];
   const ext = href.startsWith("http");
   return (
     <a href={href} {...(ext ? { target: "_blank", rel: "noreferrer" } : {})}
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-sm px-7 text-sm font-medium tracking-wide transition-all duration-500 ${styles}`}>
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-[4px] px-7 text-xs font-bold uppercase tracking-[0.16em] transition-colors duration-300 ${styles}`}>
       {children}
     </a>
   );
@@ -89,29 +91,27 @@ function Header() {
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
   }, []);
-  const light = !scrolled && !open;
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled || open ? "bg-cream/85 backdrop-blur-md border-b border-border/60" : "bg-transparent"}`}>
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 md:px-10">
-        <a href="#inicio" className={`flex items-center gap-3 ${light ? "text-cream" : "text-foreground"}`}>
-          <img src={logo.url} alt="Logo Padaria Roma" className="h-10 w-auto shrink-0" />
-          <span className="leading-none">
-            <span className="block font-serif text-3xl italic">Roma</span>
-            <span className="eyebrow block text-[0.55rem] opacity-80">Casa de Pães</span>
-          </span>
+    <header className={`fixed inset-x-0 top-0 z-50 bg-cream transition-shadow duration-500 ${scrolled || open ? "shadow-[0_1px_0_var(--border)]" : ""}`}>
+      <div className="h-1 bg-wine" />
+      <div className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 md:px-10 ${scrolled ? "h-20" : "h-24 md:h-28"}`}>
+        <a href="#inicio" aria-label="Padaria Roma — início" className="shrink-0">
+          <img src={logo.url} alt="Padaria Roma Casa de Pães" className={`w-auto transition-all duration-500 ${scrolled ? "h-14" : "h-16 md:h-20"}`} />
         </a>
-        <nav className={`hidden items-center gap-8 text-sm lg:flex ${light ? "text-cream" : "text-foreground"}`}>
-          {nav.map(([l, h]) => <a key={h} href={h} className="link-underline">{l}</a>)}
-          <Btn href={MAPS} variant={light ? "ghostLight" : "solid"}>Como chegar</Btn>
+        <nav className="hidden items-center gap-7 text-sm font-medium text-brown lg:flex">
+          {nav.slice(1).map(([l, h]) => <a key={h} href={h} className="link-underline transition-colors hover:text-wine">{l}</a>)}
+          <Btn href={MAPS}>Como chegar</Btn>
         </nav>
-        <button aria-label="Menu" onClick={() => setOpen(!open)} className={`grid h-11 w-11 place-items-center lg:hidden ${light ? "text-cream" : "text-foreground"}`}>
-          {open ? <X size={22} /> : <Menu size={22} />}
+        <button aria-label="Menu" onClick={() => setOpen(!open)} className="grid h-11 w-11 place-items-center text-wine lg:hidden">
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
       {open && (
-        <div className="h-[calc(100svh-5rem)] border-t border-border/60 bg-cream px-6 pt-8 lg:hidden">
-          {nav.map(([l, h]) => (
-            <a key={h} href={h} onClick={() => setOpen(false)} className="block border-b border-border/60 py-4 font-serif text-3xl">{l}</a>
+        <div className="h-[calc(100svh-6rem)] border-t border-border bg-cream px-6 pt-6 lg:hidden">
+          {nav.map(([l, h], i) => (
+            <a key={h} href={h} onClick={() => setOpen(false)} className="flex items-baseline gap-4 border-b border-border py-4 font-serif text-3xl text-brown">
+              <span className="font-sans text-xs font-bold text-caramel">0{i + 1}</span>{l}
+            </a>
           ))}
           <div className="mt-8"><Btn href={MAPS}>Como chegar</Btn></div>
         </div>
@@ -121,34 +121,43 @@ function Header() {
 }
 
 function Hero() {
-  const [y, setY] = useState(0);
-  useEffect(() => {
-    const on = () => setY(window.scrollY);
-    window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
-  }, []);
   return (
-    <section id="inicio" className="relative h-[100svh] min-h-[620px] overflow-hidden bg-coffee">
-      <img src={hero} alt="Balcão da padaria com pães, baguetes, croissants e pão de queijo" width={1920} height={1152}
-        className="absolute inset-0 h-full w-full object-cover" style={{ transform: `translateY(${y * 0.15}px) scale(1.05)` }} />
-      <div className="absolute inset-0 bg-gradient-to-t from-coffee/85 via-coffee/35 to-coffee/30" />
-      <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-5 pb-14 md:px-10 md:pb-20">
-        <p className="eyebrow mb-6 text-wheat">Padaria • Cafeteria • Confeitaria</p>
-        <h1 className="max-w-4xl text-[3.1rem] leading-[0.95] text-cream sm:text-7xl md:text-[6.5rem]">
-          Todo dia começa<br /><em className="text-wheat">melhor</em> com pão fresco.
-        </h1>
-        <div className="mt-8 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
-          <p className="max-w-md text-base leading-relaxed text-cream/85 md:text-lg">
+    <section id="inicio" className="relative bg-cream pt-28 md:pt-32">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-16 md:grid-cols-12 md:items-center md:px-10 md:pb-24">
+        <div className="order-2 md:order-1 md:col-span-5">
+          <p className="eyebrow text-wine">Casa de Pães · Itajubá</p>
+          <h1 className="mt-6 text-[2.9rem] leading-[1.02] text-brown sm:text-6xl lg:text-[4.6rem]">
+            Todo dia começa <em className="text-wine">melhor</em> com pão fresco.
+          </h1>
+          <p className="mt-7 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
             Pães, cafés e sabores preparados para fazer parte dos melhores momentos do seu dia.
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Btn href="#sabores" variant="light">Conheça nossos sabores</Btn>
-            <Btn href={MAPS} variant="ghostLight">Como chegar</Btn>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <Btn href="#sabores">Conheça nossos sabores</Btn>
+            <Btn href={MAPS} variant="outline">Como chegar</Btn>
+          </div>
+          <div className="mt-12 grid grid-cols-3 border-t border-wine/30 pt-5 text-brown">
+            {[["06h", "abre cedo"], ["Seg–Sáb", "06:00 às 20:00"], ["4.6★", "no Google"]].map(([a, b]) => (
+              <div key={a}><p className="font-serif text-2xl text-wine">{a}</p><p className="mt-1 text-xs text-muted-foreground">{b}</p></div>
+            ))}
           </div>
         </div>
-        <p className="mt-10 flex items-center gap-2 border-t border-cream/20 pt-5 text-xs tracking-widest text-cream/70 uppercase">
-          <MapPin size={14} /> Av. BPS, 35 • Itajubá — MG
-        </p>
+        <div className="relative order-1 md:order-2 md:col-span-7">
+          <div className="overflow-hidden rounded-t-[999px] border border-wine/20 p-2 md:ml-8">
+            <img src={heroRoma} alt="Mesa com pão francês, pão de queijo e café" width={1280} height={1600}
+              className="aspect-[4/5] w-full rounded-t-[999px] object-cover md:aspect-[5/5.4]" />
+          </div>
+          <div className="absolute -bottom-6 left-0 grid h-28 w-28 place-items-center rounded-full bg-wine p-3 text-center text-cream shadow-[0_10px_30px_-10px_var(--wine)] md:-left-2 md:h-32 md:w-32">
+            <div className="rounded-full border border-cream/40 p-3">
+              <p className="eyebrow justify-center text-[0.5rem] text-caramel before:hidden">Desde sempre</p>
+              <p className="font-serif text-lg italic leading-tight">Pão quentinho</p>
+              <p className="text-[0.6rem] uppercase tracking-widest">toda manhã</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 border-y border-border bg-card px-5 py-4 text-xs font-medium uppercase tracking-[0.2em] text-brown md:px-10">
+        <MapPin size={14} className="text-wine" /> Av. BPS, 35 · Pinheirinho · Itajubá — MG
       </div>
     </section>
   );
@@ -156,14 +165,14 @@ function Hero() {
 
 function About() {
   return (
-    <section id="a-roma" className="mx-auto max-w-7xl px-5 py-24 md:px-10 md:py-40">
+    <section id="a-roma" className="bg-card"><div className="mx-auto max-w-7xl px-5 py-24 md:px-10 md:py-36">
       <div className="grid gap-12 md:grid-cols-12 md:gap-10">
-        <div className="reveal img-zoom md:col-span-6 md:-ml-10">
+        <div className="reveal img-zoom md:col-span-6">
           <img src={oven} alt="Pães saindo do forno" loading="lazy" width={1024} height={1280} className="aspect-[4/5] w-full object-cover" />
         </div>
         <div className="reveal md:col-span-5 md:col-start-8 md:pt-24">
-          <p className="eyebrow text-caramel">Um pouco da Roma</p>
-          <h2 className="mt-5 text-4xl leading-[1.05] md:text-6xl">Uma padaria feita para fazer parte do seu dia.</h2>
+          <p className="eyebrow text-wine">Casa de Pães</p>
+          <h2 className="mt-5 text-4xl leading-[1.08] text-brown md:text-6xl">Uma padaria feita para fazer parte do seu dia.</h2>
           <p className="mt-8 leading-relaxed text-muted-foreground">
             Na Roma, cada fornada é preparada com cuidado e atenção aos detalhes. Pães fresquinhos, café passado na hora e aquela mesa onde dá vontade de sentar sem pressa.
           </p>
@@ -173,31 +182,32 @@ function About() {
           <ul className="mt-10 grid grid-cols-2 gap-x-6 border-t border-border">
             {["Pães frescos", "Café da manhã", "Confeitaria", "Encomendas"].map((t, i) => (
               <li key={t} className="flex items-baseline gap-3 border-b border-border py-4">
-                <span className="font-serif text-sm italic text-caramel">0{i + 1}</span>
+                <span className="font-sans text-xs font-bold text-wine">0{i + 1}</span>
                 <span className="text-sm font-medium">{t}</span>
               </li>
             ))}
           </ul>
         </div>
       </div>
-    </section>
+    </div></section>
   );
 }
 
 const flavors = [
   { n: "01", t: "Pães & Baguetes", d: "Pães para começar o dia, acompanhar refeições ou simplesmente comer ainda quentinhos.", img: paofrances },
-  { n: "02", t: "Café da Manhã", d: "Café passado, pão de queijo, lanches e aquele começo de dia sem pressa.", img: coffee },
+  { n: "02", t: "Pão de queijo & Café", d: "Pão de queijo quentinho, café passado na hora e aquele começo de dia sem pressa.", img: paodequeijo },
   { n: "03", t: "Confeitaria", d: "Bolos, tortas e doces para deixar o cotidiano um pouco mais especial.", img: cakes },
   { n: "04", t: "Salgados & Lanches", d: "Opções para aquela pausa rápida ou para acompanhar um bom café.", img: salgados },
 ];
 
 function Flavors() {
   return (
-    <section id="sabores" className="bg-card py-24 md:py-40">
+    <section id="sabores" className="relative overflow-hidden bg-wine py-24 text-cream md:py-36">
+      <Wheat className="pointer-events-none absolute right-8 top-12 hidden h-56 text-caramel/40 md:block" />
       <div className="mx-auto max-w-7xl px-5 md:px-10">
         <div className="reveal max-w-3xl">
           <p className="eyebrow text-caramel">Nossos sabores</p>
-          <h2 className="mt-5 text-4xl leading-[1.05] md:text-7xl">Tem sempre alguma coisa boa <em>saindo do forno.</em></h2>
+          <h2 className="mt-5 text-4xl leading-[1.08] text-wheat md:text-6xl">Tem sempre alguma coisa boa <em className="text-caramel">saindo do forno.</em></h2>
         </div>
 
         <div className="mt-20 space-y-24 md:space-y-36">
@@ -206,21 +216,21 @@ function Flavors() {
             return (
               <article key={f.n} className="reveal grid items-center gap-8 md:grid-cols-12">
                 <div className={`img-zoom ${right ? "md:order-2 md:col-span-6 md:col-start-7" : "md:col-span-7"} ${i === 2 ? "md:col-span-5" : ""}`}>
-                  <img src={f.img} alt={f.t} loading="lazy" className={`w-full object-cover ${i % 2 ? "aspect-[4/3]" : "aspect-[5/4]"}`} />
+                  <img src={f.img} alt={f.t} loading="lazy" className={`w-full border border-caramel/30 object-cover ${i % 2 ? "aspect-[4/3]" : "aspect-[5/4]"}`} />
                 </div>
                 <div className={`${right ? "md:order-1 md:col-span-4 md:col-start-2" : "md:col-span-4 md:col-start-9"}`}>
-                  <span className="font-serif text-6xl italic text-wheat md:text-8xl">{f.n}</span>
-                  <h3 className="mt-2 text-3xl md:text-5xl">{f.t}</h3>
-                  <p className="mt-5 max-w-sm leading-relaxed text-muted-foreground">{f.d}</p>
+                  <span className="font-serif text-5xl italic text-caramel md:text-7xl">{f.n}</span>
+                  <h3 className="mt-2 text-3xl text-wheat md:text-5xl">{f.t}</h3>
+                  <p className="mt-5 max-w-sm leading-relaxed text-cream/80">{f.d}</p>
                 </div>
               </article>
             );
           })}
-          <article className="reveal grid items-end gap-8 border-t border-border pt-16 md:grid-cols-12">
-            <span className="font-serif text-6xl italic text-wheat md:col-span-2 md:text-8xl">05</span>
-            <h3 className="text-3xl md:col-span-4 md:text-5xl">Encomendas</h3>
-            <p className="leading-relaxed text-muted-foreground md:col-span-4">Doces, bolos e preparos especiais para comemorações e momentos importantes.</p>
-            <a href="#encomendas" className="link-underline inline-flex items-center gap-1 justify-self-start text-sm font-medium md:col-span-2 md:justify-self-end">Saiba mais <ArrowUpRight size={16} /></a>
+          <article className="reveal grid items-end gap-8 border-t border-caramel/40 pt-16 md:grid-cols-12">
+            <span className="font-serif text-5xl italic text-caramel md:col-span-2 md:text-7xl">05</span>
+            <h3 className="text-3xl text-wheat md:col-span-4 md:text-5xl">Encomendas</h3>
+            <p className="leading-relaxed text-cream/80 md:col-span-4">Doces, bolos e preparos especiais para comemorações e momentos importantes.</p>
+            <a href="#encomendas" className="link-underline inline-flex items-center gap-1 justify-self-start text-sm font-semibold text-caramel md:col-span-2 md:justify-self-end">Saiba mais <ArrowUpRight size={16} /></a>
           </article>
         </div>
       </div>
@@ -230,19 +240,19 @@ function Flavors() {
 
 function Breakfast() {
   return (
-    <section id="cafe" className="relative overflow-hidden bg-coffee text-coffee-foreground">
-      <Wheat className="pointer-events-none absolute right-6 top-10 hidden h-64 text-wheat/20 md:block" />
+    <section id="cafe" className="relative overflow-hidden bg-wheat text-brown">
+      <Wheat className="pointer-events-none absolute right-6 top-10 hidden h-64 text-wine/20 md:block" />
       <div className="grid md:grid-cols-2">
         <div className="img-zoom">
           <img src={breakfast} alt="Mesa de café da manhã com pão de queijo, café e frutas" loading="lazy" width={1280} height={1280} className="h-full min-h-[420px] w-full object-cover" />
         </div>
         <div className="reveal flex flex-col justify-center px-6 py-20 md:px-16 lg:px-24">
-          <p className="eyebrow text-caramel">As manhãs na Roma</p>
-          <h2 className="mt-6 text-4xl leading-[1.05] text-cream md:text-6xl">Seu café da manhã merece um <em className="text-wheat">lugar especial.</em></h2>
-          <p className="mt-8 max-w-md leading-relaxed text-coffee-foreground/75">
+          <p className="eyebrow text-wine">Café da manhã</p>
+          <h2 className="mt-6 text-4xl leading-[1.08] md:text-6xl">Seu café da manhã merece um <em className="text-wine">lugar especial.</em></h2>
+          <p className="mt-8 max-w-md leading-relaxed text-muted-foreground">
             Do café quentinho ao pão de queijo, das torradas aos doces: escolha seus favoritos e comece o dia do melhor jeito.
           </p>
-          <div className="mt-10"><Btn href={MAPS} variant="light">Venha tomar um café</Btn></div>
+          <div className="mt-10"><Btn href={MAPS}>Venha tomar um café</Btn></div>
         </div>
       </div>
     </section>
@@ -256,23 +266,23 @@ const showcase = [
   { t: "Bolos & Tortas", img: cakes, c: "md:row-span-2" },
   { t: "Lanches", img: americano.url, c: "md:row-span-2" },
   { t: "Salgados", img: salgados, c: "" },
-  { t: "Pão de queijo", img: breakfast, c: "" },
+  { t: "Pão de queijo", img: paodequeijo, c: "" },
   { t: "Baguetes", img: hero, c: "md:col-span-2" },
 ];
 
 function Showcase() {
   return (
-    <section className="py-24 md:py-40">
+    <section className="bg-card py-24 md:py-36">
       <div className="mx-auto max-w-7xl px-5 md:px-10">
         <div className="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <h2 className="max-w-2xl text-4xl leading-[1.05] md:text-6xl">Os sabores que fazem parte da Roma.</h2>
+          <div><p className="eyebrow text-wine">Vitrine</p><h2 className="mt-5 max-w-2xl text-4xl leading-[1.08] text-brown md:text-6xl">Os sabores que fazem parte da Roma.</h2></div>
           <p className="max-w-xs text-sm text-muted-foreground">Pão francês, pão de queijo, croissants, baguetes, bolos, tortas, cafés e salgados.</p>
         </div>
         <div className="no-scrollbar -mx-5 mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 md:mx-0 md:grid md:auto-rows-[220px] md:grid-cols-4 md:overflow-visible md:px-0">
           {showcase.map((s) => (
             <figure key={s.t} className={`img-zoom group relative h-80 w-[72vw] shrink-0 snap-start md:h-auto md:w-auto ${s.c}`}>
               <img src={s.img} alt={s.t} loading="lazy" className="h-full w-full object-cover" />
-              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-coffee/80 to-transparent p-5 font-serif text-2xl italic text-cream">{s.t}</figcaption>
+              <figcaption className="absolute bottom-4 left-4 rounded-[3px] bg-cream px-3 py-1.5 font-serif text-lg italic text-wine">{s.t}</figcaption>
             </figure>
           ))}
         </div>
@@ -283,16 +293,17 @@ function Showcase() {
 
 function Orders() {
   return (
-    <section id="encomendas" className="bg-wheat/40 py-24 md:py-36">
+    <section id="encomendas" className="bg-cream py-24 md:py-36">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 md:grid-cols-12 md:px-10">
         <div className="reveal md:col-span-5 md:col-start-2">
-          <p className="font-serif text-2xl italic text-wine">Tem um momento especial chegando?</p>
-          <h2 className="mt-5 text-5xl leading-[1] md:text-7xl">Deixe a Roma fazer parte dele.</h2>
+          <p className="eyebrow text-wine">Encomendas</p>
+          <p className="mt-5 font-serif text-2xl italic text-wine">Tem um momento especial chegando?</p>
+          <h2 className="mt-3 text-5xl leading-[1.05] text-brown md:text-6xl">Deixe a Roma fazer parte dele.</h2>
           <p className="mt-8 max-w-md leading-relaxed text-muted-foreground">Consulte nossas opções de bolos, tortas, doces e encomendas especiais.</p>
           <div className="mt-10"><Btn href={WHATSAPP}>Fazer uma encomenda</Btn></div>
         </div>
         <div className="reveal img-zoom md:col-span-5 md:col-start-8 md:-mb-48">
-          <img src={cakes} alt="Bolos e tortas da confeitaria" loading="lazy" width={1024} height={1280} className="aspect-[4/5] w-full object-cover" />
+          <img src={cakes} alt="Bolos e tortas da confeitaria" loading="lazy" width={1024} height={1280} className="aspect-[4/5] w-full rounded-t-[999px] object-cover" />
         </div>
       </div>
     </section>
@@ -306,19 +317,19 @@ function Reviews() {
       <div className="mx-auto max-w-7xl px-5 md:px-10">
         <div className="reveal grid gap-12 md:grid-cols-12">
           <div className="md:col-span-6">
-            <p className="eyebrow text-caramel">Prova social</p>
-            <h2 className="mt-5 text-4xl leading-[1.05] md:text-6xl">Quem passa pela Roma, <em>volta.</em></h2>
+            <p className="eyebrow text-wine">Avaliações</p>
+            <h2 className="mt-5 text-4xl leading-[1.08] text-brown md:text-6xl">Quem passa pela Roma, <em className="text-wine">volta.</em></h2>
           </div>
           <div className="md:col-span-5 md:col-start-8">
             <div className="flex items-end gap-5">
-              <span className="font-serif text-8xl leading-none">4.6</span>
+              <span className="font-serif text-8xl leading-none text-wine">4.6</span>
               <div className="pb-2">
                 <div className="flex gap-1 text-caramel">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={18} fill="currentColor" strokeWidth={0} />)}</div>
                 <p className="mt-2 text-sm text-muted-foreground">+200 avaliações no Google</p>
               </div>
             </div>
             <ul className="mt-10 border-t border-border">
-              {notes.map((n) => <li key={n} className="border-b border-border py-4 font-serif text-2xl italic">"{n}"</li>)}
+              {notes.map((n) => <li key={n} className="border-b border-border py-4 font-serif text-2xl italic text-brown">"{n}"</li>)}
             </ul>
             <a href={MAPS} target="_blank" rel="noreferrer" className="link-underline mt-8 inline-flex items-center gap-1 text-sm font-medium">Veja nossas avaliações no Google <ArrowUpRight size={16} /></a>
           </div>
@@ -333,17 +344,18 @@ function Location() {
     <section id="contato" className="border-t border-border bg-card py-24 md:py-36">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 md:grid-cols-12 md:px-10">
         <div className="reveal md:col-span-5">
-          <h2 className="text-5xl leading-[1] md:text-7xl">Estamos te <em>esperando.</em></h2>
+          <p className="eyebrow text-wine">Contato</p>
+          <h2 className="mt-5 text-5xl leading-[1.05] text-brown md:text-6xl">Estamos te <em className="text-wine">esperando.</em></h2>
           <div className="mt-12 grid gap-10 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
             <div>
-              <p className="eyebrow text-caramel">Endereço</p>
+              <p className="eyebrow text-wine">Endereço</p>
               <p className="mt-4 leading-relaxed">Padaria Roma — Casa de Pães<br />Av. BPS, 35 · Pinheirinho<br />Itajubá — MG<br />CEP 37500-176</p>
               <a href="tel:+5535984382807" className="link-underline mt-4 inline-flex items-center gap-2 text-sm"><Phone size={14} /> (35) 98438-2807</a>
             </div>
             <div>
-              <p className="eyebrow text-caramel">Horário</p>
+              <p className="eyebrow text-wine">Horário</p>
               <p className="mt-4">Segunda a sábado</p>
-              <p className="font-serif text-4xl">06:00 — 20:00</p>
+              <p className="font-serif text-4xl text-wine">06:00 — 20:00</p>
             </div>
           </div>
           <div className="mt-12"><Btn href={MAPS}><MapPin size={16} /> Abrir no Google Maps</Btn></div>
@@ -359,15 +371,19 @@ function Location() {
 
 function FinalCta() {
   return (
-    <section className="relative overflow-hidden bg-coffee py-32 md:py-48">
-      <img src={coffee} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-45" />
-      <div className="absolute inset-0 bg-gradient-to-r from-coffee via-coffee/70 to-transparent" />
-      <div className="reveal relative mx-auto max-w-7xl px-5 md:px-10">
-        <h2 className="max-w-3xl text-5xl leading-[1] text-cream md:text-8xl">Tem coisa melhor que <em className="text-wheat">pão quentinho?</em></h2>
-        <p className="mt-8 max-w-md text-lg text-cream/80">Passe na Roma e descubra seu próximo favorito.</p>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Btn href={MAPS} variant="light">Como chegar</Btn>
-          <Btn href={WHATSAPP} variant="ghostLight">Falar pelo WhatsApp</Btn>
+    <section className="bg-coffee text-cream">
+      <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-24 md:grid-cols-12 md:px-10 md:py-32">
+        <div className="reveal md:col-span-7">
+          <p className="eyebrow text-caramel">Venha nos visitar</p>
+          <h2 className="mt-6 text-5xl leading-[1.05] text-wheat md:text-7xl">Tem coisa melhor que <em className="text-caramel">pão quentinho?</em></h2>
+          <p className="mt-8 max-w-md text-lg text-cream/75">Passe na Roma e descubra seu próximo favorito.</p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <Btn href={MAPS}>Como chegar</Btn>
+            <Btn href={WHATSAPP} variant="ghostLight">Falar pelo WhatsApp</Btn>
+          </div>
+        </div>
+        <div className="reveal img-zoom md:col-span-5">
+          <img src={coffee} alt="Café passado na Roma" loading="lazy" className="aspect-[4/5] w-full rounded-t-[999px] object-cover" />
         </div>
       </div>
     </section>
@@ -376,24 +392,26 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="bg-coffee text-coffee-foreground/70">
-      <div className="mx-auto grid max-w-7xl gap-12 border-t border-cream/10 px-5 py-16 md:grid-cols-4 md:px-10">
+    <footer className="bg-coffee text-cream/70">
+      <div className="mx-auto max-w-7xl px-5 md:px-10"><div className="ornament text-caramel"><Wheat className="h-10 w-4 rotate-90" /></div></div>
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-4 md:px-10">
         <div className="md:col-span-2">
-          <p className="font-serif text-5xl italic text-cream">Roma</p>
-          <p className="eyebrow mt-1 text-wheat">Casa de Pães</p>
-          <p className="mt-6 text-sm">Av. BPS, 35 · Itajubá — MG</p>
+          <div className="inline-block rounded-[4px] bg-cream p-4"><img src={logo.url} alt="Padaria Roma Casa de Pães" loading="lazy" className="h-20 w-auto" /></div>
+          <p className="mt-6 text-sm">Av. BPS, 35 · Pinheirinho · Itajubá — MG</p>
+          <p className="mt-1 text-sm">Segunda a sábado · 06:00 — 20:00</p>
         </div>
         <ul className="space-y-3 text-sm">
           {[["Início", "#inicio"], ["A Roma", "#a-roma"], ["Sabores", "#sabores"], ["Encomendas", "#encomendas"], ["Contato", "#contato"]].map(([l, h]) => (
-            <li key={h}><a href={h} className="link-underline hover:text-cream">{l}</a></li>
+            <li key={h}><a href={h} className="link-underline hover:text-caramel">{l}</a></li>
           ))}
         </ul>
         <ul className="space-y-3 text-sm">
-          <li><a href="https://www.instagram.com/romacasadepaes/" target="_blank" rel="noreferrer" className="link-underline hover:text-cream">Instagram</a></li>
-          <li><a href={WHATSAPP} target="_blank" rel="noreferrer" className="link-underline hover:text-cream">WhatsApp</a></li>
+          <li><a href="https://www.instagram.com/romacasadepaes/" target="_blank" rel="noreferrer" className="link-underline hover:text-caramel">Instagram</a></li>
+          <li><a href={WHATSAPP} target="_blank" rel="noreferrer" className="link-underline hover:text-caramel">WhatsApp</a></li>
+          <li><a href="tel:+5535984382807" className="link-underline hover:text-caramel">(35) 98438-2807</a></li>
         </ul>
       </div>
-      <p className="mx-auto max-w-7xl px-5 pb-10 text-xs md:px-10">© Padaria Roma Casa de Pães. Todos os direitos reservados.</p>
+      <div className="border-t border-cream/10"><p className="mx-auto max-w-7xl px-5 py-6 text-xs md:px-10">© Padaria Roma Casa de Pães. Todos os direitos reservados.</p></div>
     </footer>
   );
 }
@@ -401,7 +419,7 @@ function Footer() {
 function WhatsFloat() {
   return (
     <a href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="Falar pelo WhatsApp"
-      className="fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-500 hover:scale-105">
+      className="fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors duration-300 hover:bg-wine-dark">
       <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4a.5.5 0 0 0 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z" /></svg>
     </a>
   );
