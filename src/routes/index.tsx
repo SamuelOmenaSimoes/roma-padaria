@@ -94,7 +94,7 @@ function Header() {
     <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled || open ? "bg-cream/85 backdrop-blur-md border-b border-border/60" : "bg-transparent"}`}>
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 md:px-10">
         <a href="#inicio" className={`flex items-center gap-3 ${light ? "text-cream" : "text-foreground"}`}>
-          <img src={logo.url} alt="Logo Padaria Roma" className="h-10 w-10 shrink-0 object-contain" />
+          <img src={logo.url} alt="Logo Padaria Roma" className="h-10 w-auto shrink-0" />
           <span className="leading-none">
             <span className="block font-serif text-3xl italic">Roma</span>
             <span className="eyebrow block text-[0.55rem] opacity-80">Casa de Pães</span>
